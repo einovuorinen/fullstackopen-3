@@ -32,18 +32,18 @@ person.save().then(response => {
     mongoose.connection.close();
 })FOR TESTING*/
 
-if ( process.argv.length==5 ) {
+if ( process.argv.length===5 ) {
   const person = new Person({
     name: process.argv[3],
     number: process.argv[4]
   })
 
-  person.save().then(response => {
+  person.save().then(function(){
     console.log(`added ${person.name} number ${person.number} to phonebook`)
     mongoose.connection.close()
   })
 }
-else if (process.argv.length==3) {
+else if (process.argv.length===3) {
   console.log('phonebook;')
   Person.find({}).then(x => {
     x.forEach(person => {

@@ -17,7 +17,7 @@ app.use(cors())
 
 app.use(bodyParser.json())
 
-morgan.token('body', function (req, res) { return JSON.stringify(req.body) })
+morgan.token('body', function (req) { return JSON.stringify(req.body) })
 app.use(morgan('tiny'))
 
 app.get('/api/persons', (req, res, next) => {
@@ -25,7 +25,7 @@ app.get('/api/persons', (req, res, next) => {
   Person.find({}).then(persons => {
     res.json(persons)
   })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
@@ -33,14 +33,14 @@ app.get('/api/persons/:id', (request, response, next) => {
     if (person) response.json(person.toJSON())
     else response.status(404).end
   })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 app.get('/info', (req, res, next) => {
-	Person.find({}).then(persons => {
+  Person.find({}).then(persons => {
     res.send(`<p>The phonebook has info of ${persons.length} people</p><p>${new Date()}</p>`)
   })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
@@ -49,9 +49,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
   response.status(204).end()
   */
   Person.findByIdAndRemove(request.params.id)
-    .then(result => {
-      response.status(204).end()
-    })
+    .then(response.status(204).end())
     .catch(error => next(error))
 })
 
@@ -90,9 +88,9 @@ app.put('/api/persons/:id', (request, response, next) => {
     number: request.body.number,
   }
 
-  Person.findByIdAndUpdate(request.params.id, person, {new: true})
-  .then(updatedPerson => response.json(updatedPerson.toJSON()))
-  .catch(error => next(error))
+  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then(updatedPerson => response.json(updatedPerson.toJSON()))
+    .catch(error => next(error))
 })
 
 const unknownEndpoint = (request, response) => {
@@ -105,7 +103,7 @@ app.use(unknownEndpoint)
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
 
-  if (error.name === 'CastError' && error.kind == 'ObjectId') {
+  if (error.name === 'CastError' && error.kind === 'ObjectId') {
     return response.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })
